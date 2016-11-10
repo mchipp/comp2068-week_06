@@ -7,8 +7,18 @@ var router = express.Router();
 // reference the Game model
 var Game = require('../models/game');
 
+// auth check
+function isLoggedIn(req, res, next) {
+  if (req.isAuthenticated()) {
+    next();
+  }
+  else {
+    res.redirect('/login');
+  }
+}
+
 // GET handler for /games
-router.get('/', function(req, res, next) {
+router.get('/', isLoggedIn, function(req, res, next) {
 
   // use Game model to run a query
   Game.find(function(err, games) {
@@ -20,23 +30,25 @@ router.get('/', function(req, res, next) {
       // load the games view
       res.render('games', {
         title: 'Video Games',
-        games: games
+        games: games,
+      user: req.user
       });
     }
   });
 });
 
 /* GET /games/add - display empty Game form */
-router.get('/add', function(req, res, next) {
+router.get('/add', isLoggedIn, function(req, res, next) {
 
   // load the blank game form
   res.render('add-game', {
-    title: 'Add a New Game'
+    title: 'Add a New Game',
+    user: req.user
   });
 });
 
 /* POST /games/add - proecess form submission */
-router.post('/add', function(req, res, next) {
+router.post('/add', isLoggedIn, function(req, res, next) {
 
   // use the game model and call the mongoose create function
   Game.create( {
@@ -56,7 +68,7 @@ router.post('/add', function(req, res, next) {
 });
 
 /* GET /games/delete/:_id - run a delete on selected game */
-router.get('/delete/:_id', function(req, res, next) {
+router.get('/delete/:_id', isLoggedIn, function(req, res, next) {
   //read the id value from the url
   var _id = req.params._id;
 
@@ -71,7 +83,7 @@ router.get('/delete/:_id', function(req, res, next) {
 });
 
 /* GET /games/:_id - show the edit form */
-router.get('/:_id', function(req, res, next) {
+router.get('/:_id', isLoggedIn, function(req, res, next) {
   // get the id from the url
   var _id = req.params._id;
 
@@ -85,14 +97,15 @@ router.get('/:_id', function(req, res, next) {
       // load the edit form
       res.render('edit-game', {
           title: 'Edit Game',
-          game: game
+          game: game,
+          user: req.user
       });
     }
   })
 });
 
 /* POST /games/:_id - save form to process Game updates */
-router.post('/:_id', function(req, res, next) {
+router.post('/:_id', isLoggedIn, function(req, res, next) {
   // get the id from the url
   var _id = req.params._id;
 

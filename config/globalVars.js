@@ -4,6 +4,7 @@
 
 //global variables for the application
 module.exports = {
- // db: 'mongodb://localhost/comp2068-thu'
- db: 'mongodb://gcmchipp:Omicron158@ds044989.mlab.com:44989/comp2068-thu'
+  db: 'mongodb://localhost/comp2068-thu',
+  //db: 'mongodb://uname:pass@ds044989.mlab.com:44989/comp2068-thu',
+  secret: 'salt for everybody shhh it is a secret'
 };
